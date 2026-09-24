@@ -209,6 +209,51 @@ html[data-theme="clean"] .bar-fill{
 }
 </style>
 
+
+<style id="aspecto-corrected-css">
+#aspectoSection{box-sizing:border-box;}
+#aspectoSection .aspecto-choice{
+  margin:9px 0;
+  padding:0;
+}
+#aspectoSection .aspecto-choice label{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  width:100%;
+  box-sizing:border-box;
+  padding:13px 14px;
+  border:1px solid #dfe3e8;
+  border-radius:12px;
+  background:#f7f8fa;
+  color:#18202a;
+  cursor:pointer;
+}
+#aspectoSection .aspecto-choice input{
+  width:19px;
+  height:19px;
+  accent-color:#2563eb;
+  flex:0 0 auto;
+}
+html[data-theme="dark"] #aspectoSection .aspecto-choice label{
+  background:#242a34!important;
+  color:#f3f4f6!important;
+  border-color:#394150!important;
+}
+html[data-theme="clean"] #aspectoSection .aspecto-choice label{
+  background:#f7f8fa!important;
+  color:#18202a!important;
+  border-color:#e2e5e9!important;
+}
+html[data-theme="clean"] #aspectoSection{
+  background:#fff!important;
+  color:#18202a!important;
+  border-color:#e7e9ed!important;
+  box-shadow:0 2px 12px rgba(15,23,42,.05)!important;
+}
+</style>
+
 </head><body><div class="app">
 <div class="top"><div><h1>Mi Rutina</h1><div id="today" class="date"></div></div><button class="secondary" onclick="resetDay()">Reiniciar</button></div>
 <nav><button onclick="show('hoy')">🏠 Hoy</button><button onclick="show('habitos')">🔁 Hábitos</button><button onclick="show('agua')">💧 Agua</button><button onclick="show('stats')">📊 Stats</button><button onclick="show('ajustes')">⚙️ Ajustes</button></nav>
@@ -230,12 +275,36 @@ html[data-theme="clean"] .bar-fill{
 
 <section id="ajustes" class="view"><div class="card"><h3>⚙️ Ajustes</h3>
 
+<div id="aspectoSection" class="card aspecto-panel" style="margin-top:16px;">
+  <h3 style="margin:0 0 6px;">🎨 Aspecto</h3>
+  <p style="margin:0 0 12px;opacity:.72;">Elegí el estilo visual de Mi Rutina.</p>
 
-<div class="aspecto-panel" id="aspectoPanel">
-  <strong>🎨 Aspecto</strong>
-  <div style="font-size:.9em;opacity:.75;margin-top:4px">Elegí cómo querés ver la app.</div>
+  <div class="aspecto-choice">
+    <label>
+      <span>☀️ Claro</span>
+      <input type="radio" name="miRutinaAspecto" value="light">
+    </label>
+  </div>
 
-  <label class="aspecto-option">
+  <div class="aspecto-choice">
+    <label>
+      <span>✨ Clean</span>
+      <input type="radio" name="miRutinaAspecto" value="clean">
+    </label>
+  </div>
+
+  <div class="aspecto-choice">
+    <label>
+      <span>🌙 Modo oscuro</span>
+      <input type="radio" name="miRutinaAspecto" value="dark">
+    </label>
+  </div>
+</div>
+
+
+
+
+<label class="aspecto-option">
     <span class="left"><span>☀️</span><span>Claro</span></span>
     <input name="aspectoTheme" type="radio" value="light" aria-label="Aspecto claro">
   </label>
@@ -252,30 +321,41 @@ html[data-theme="clean"] .bar-fill{
 </div>
 
 
+
 <script id="aspecto-theme-js">
 (function(){
   const KEY = "miRutinaTheme";
-  function applyTheme(theme){
-    const valid = ["light","dark","clean"];
-    const t = valid.includes(theme) ? theme : "light";
-    document.documentElement.setAttribute("data-theme", t);
-    document.querySelectorAll('input[name="aspectoTheme"]').forEach(function(r){
-      r.checked = r.value === t;
+  const VALID = ["light","clean","dark"];
+
+  function setTheme(theme){
+    if(!VALID.includes(theme)) theme = "light";
+    document.documentElement.setAttribute("data-theme", theme);
+    document.querySelectorAll('input[name="miRutinaAspecto"]').forEach(function(input){
+      input.checked = input.value === theme;
     });
-    try { localStorage.setItem(KEY, t); } catch(e){}
+    try { localStorage.setItem(KEY, theme); } catch(e) {}
   }
-  function initTheme(){
+
+  function startAspecto(){
     let saved = "light";
-    try { saved = localStorage.getItem(KEY) || "light"; } catch(e){}
-    applyTheme(saved);
-    document.querySelectorAll('input[name="aspectoTheme"]').forEach(function(r){
-      r.addEventListener("change", function(){ if(this.checked) applyTheme(this.value); });
+    try {
+      saved = localStorage.getItem(KEY) || "light";
+    } catch(e) {}
+    setTheme(saved);
+
+    document.querySelectorAll('input[name="miRutinaAspecto"]').forEach(function(input){
+      input.addEventListener("change", function(){
+        if(this.checked) setTheme(this.value);
+      });
     });
   }
-  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", initTheme);
-  else initTheme();
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", startAspecto);
+  } else {
+    startAspecto();
+  }
 })();
 </script>
-
 
 </body></html>
